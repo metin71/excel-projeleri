@@ -1,0 +1,32 @@
+name: SKT Conta görsellerini yayımla
+on:
+  push:
+    paths:
+      - '_upload/**'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  extract-images:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ZIP parçalarını birleştir ve görselleri aç
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s _upload/sktconta_images.zip.part01
+          test -s _upload/sktconta_images.zip.part02
+          cat _upload/sktconta_images.zip.part01 _upload/sktconta_images.zip.part02 > /tmp/sktconta_images.zip
+          mkdir -p images
+          unzip -oq /tmp/sktconta_images.zip -d images
+          echo "Görsel sayısı: $(find images -type f | wc -l)"
+      - name: Görselleri depoya kaydet
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add images/
+          if ! git diff --cached --quiet; then
+            git commit -m "SKT Conta ürün görsellerini ekle"
+            git push
+          fi
