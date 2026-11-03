@@ -2,7 +2,7 @@ name: SKT Conta görsellerini yayımla
 on:
   push:
     paths:
-      - '_upload/**'
+      - '**'
   workflow_dispatch:
 permissions:
   contents: write
@@ -15,9 +15,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -s _upload/sktconta_images.zip.part01
-          test -s _upload/sktconta_images.zip.part02
-          cat _upload/sktconta_images.zip.part01 _upload/sktconta_images.zip.part02 > /tmp/sktconta_images.zip
+          test -s sktconta_images.zip.part01
+          test -s sktconta_images.zip.part02
+          cat sktconta_images.zip.part01 sktconta_images.zip.part02 > /tmp/sktconta_images.zip
           mkdir -p images
           unzip -oq /tmp/sktconta_images.zip -d images
           echo "Görsel sayısı: $(find images -type f | wc -l)"
